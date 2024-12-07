@@ -1,8 +1,12 @@
 import React from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { LoginData } from "../lib/types/Data"
+import axios from "axios"
+import { DriverDataContext } from "../context/DriverContext"
 
 export default function DriverLogin() {
+    const navigate = useNavigate()
+    const { setDriver } = React.useContext(DriverDataContext)
     const [driverData, setDriverData] = React.useState<LoginData>({
         email: "",
         password: "",
@@ -12,10 +16,18 @@ export default function DriverLogin() {
         setDriverData({ ...driverData, [e.target.name]: e.target.value })
     }
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
-        console.log(driverData)
+        const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/drivers/login`, driverData)
+
+        if (res.status === 200) {
+            if (res.data?.driver && res.data?.token) {
+                setDriver(res.data?.driver)
+                localStorage.setItem("token", res.data.token)
+                navigate("/driver-home")
+            }
+        }
 
         setDriverData({
             email: "",

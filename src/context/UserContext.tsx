@@ -1,14 +1,14 @@
 import React from "react"
 import { UserData } from "../lib/types/Data";
 
-interface UserContextType {
+export interface UserContextType {
     user: UserData;
     setUser: React.Dispatch<React.SetStateAction<UserData>>;
 }
 
-const defaultUserContext: UserContextType = {
+export const defaultUserContext: UserContextType = {
     user: {
-        fullName: {
+        fullname: {
             firstname: "",
             lastname: "",
         },
@@ -26,7 +26,7 @@ interface UserContextProps {
 export default function UserContext({ children }: UserContextProps) {
 
     const [user, setUser] = React.useState<UserData>({
-        fullName: {
+        fullname: {
             firstname: "",
             lastname: "",
         },

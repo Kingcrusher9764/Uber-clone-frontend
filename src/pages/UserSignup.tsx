@@ -1,11 +1,14 @@
 import React from "react"
-import { Link } from "react-router-dom"
-import { RegisterData } from "../lib/types/Data"
+import { Link, useNavigate } from "react-router-dom"
+import { RegisterUserData } from "../lib/types/Data"
+import axios from "axios"
+import { UserDataContext } from "../context/UserContext"
 
 export default function UserSignup() {
 
-    const [userData, setUserData] = React.useState<RegisterData>({
-        fullName: {
+    const navigate = useNavigate()
+    const [userData, setUserData] = React.useState<RegisterUserData>({
+        fullname: {
             firstname: "",
             lastname: "",
         },
@@ -13,6 +16,9 @@ export default function UserSignup() {
         password: "",
     })
 
+    const { setUser } = React.useContext(UserDataContext)
+
+    // function to handle logic
     const handleData = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUserData({
             ...userData,
@@ -23,20 +29,30 @@ export default function UserSignup() {
     const handleName = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUserData({
             ...userData,
-            fullName: {
-                ...userData.fullName,
+            fullname: {
+                ...userData.fullname,
                 [e.target.name]: e.target.value
             }
         })
     }
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
-        console.log(userData)
+        const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/register`, {
+            ...userData
+        })
+
+        if (res.status === 201) {
+            if (res.data?.user && res.data?.token) {
+                setUser(res.data?.user)
+                localStorage.setItem("token", res.data.token)
+                navigate("/home")
+            }
+        }
 
         setUserData({
-            fullName: {
+            fullname: {
                 firstname: "",
                 lastname: "",
             },
@@ -65,7 +81,7 @@ export default function UserSignup() {
                             placeholder="First Name"
                             name="firstname"
                             required
-                            value={userData.fullName.firstname}
+                            value={userData.fullname.firstname}
                             onChange={(e) => handleName(e)}
                         />
 
@@ -75,7 +91,7 @@ export default function UserSignup() {
                             placeholder="Last Name"
                             name="lastname"
                             required
-                            value={userData.fullName.lastname}
+                            value={userData.fullname.lastname}
                             onChange={(e) => handleName(e)}
                         />
                     </div>
@@ -105,7 +121,7 @@ export default function UserSignup() {
                     <button
                         className="bg-[#111] text-white font-semibold rounded-lg w-full text-lg mb-4 py-2"
                     >
-                        Sign Up
+                        Create account
                     </button>
                 </form>
 
