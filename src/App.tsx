@@ -9,6 +9,7 @@ import UserProtectedRoute from "./pages/UserProtectedRoute";
 import UserLogout from "./pages/UserLogout";
 import DriverHome from "./pages/DriverHome";
 import DriverProtectedRoute from "./pages/DriverProtectedRoute";
+import DriverLogout from "./pages/DriverLogout";
 
 export default function App() {
     return (
@@ -29,6 +30,7 @@ export default function App() {
                     <DriverHome />
                 </DriverProtectedRoute>
             } />
+            <Route path="/driver/logout" element={<DriverLogout />} />
         </Routes>
     )
 }

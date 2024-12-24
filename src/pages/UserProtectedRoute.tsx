@@ -17,20 +17,23 @@ export default function UserProtectedRoute({ children }: ProtectedRouteProps) {
         return <Navigate to="/login" />
     }
 
-    axios.get(`${import.meta.env.VITE_BASE_URL}/users/profile`, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    }).then((res) => {
-        if (res.status === 200) {
-            setUser(res.data)
-            setIsLoading(false)
-        }
-    }).catch((err) => {
-        console.log(err)
-        localStorage.removeItem("token")
-        navigate("/login")
-    })
+    React.useEffect(() => {
+        axios.get(`${import.meta.env.VITE_BASE_URL}/users/profile`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }).then((res) => {
+            if (res.status === 200) {
+                setUser(res.data)
+                setIsLoading(false)
+            }
+        }).catch((err) => {
+            console.log(err)
+            localStorage.removeItem("token")
+            navigate("/login")
+        })
+    }, [token])
+
 
     if (isLoading) {
         return (
